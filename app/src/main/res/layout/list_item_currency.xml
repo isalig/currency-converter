@@ -19,7 +19,6 @@
         android:padding="4dp"
         android:textColor="@android:color/white"
         android:textColorHint="@android:color/white"
-        android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -65,25 +64,29 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@tools:sample/lorem/random" />
 
-    <EditText
+    <io.aiico.currency.presentation.FrozenCursorEditText
         android:id="@+id/currencyAmountEditText"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:digits="0123456789."
         android:fontFamily="sans-serif-medium"
         android:gravity="end"
         android:hint="@string/amount_hint"
+        android:imeOptions="actionDone"
         android:importantForAutofill="no"
         android:inputType="numberDecimal"
         android:lineSpacingExtra="5sp"
-        android:maxLines="1"
         android:paddingStart="16dp"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:textColor="#191C1F"
         android:textSize="20sp"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="120dp"
         tools:ignore="RtlSymmetry"
-        tools:text="330.2" />
+        tools:text="2222.22123" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

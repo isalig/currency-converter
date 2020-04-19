@@ -18,6 +18,7 @@ android {
 
         buildConfigField "String", "API_BASE_URL", "\"https://hiring.revolut.codes/api/android/\""
         buildConfigField 'String', "DEFAULT_CURRENCY", "\"EUR\""
+        buildConfigField 'String', "DEFAULT_AMOUNT", "\"100\""
     }
 
     buildTypes {

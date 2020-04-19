@@ -1,7 +1,6 @@
 package io.aiico.currency.di
 
 import dagger.Component
-import io.aiico.currency.di.ApiModule
 import io.aiico.currency.presentation.CurrenciesActivity
 
 @Component(modules = [ApiModule::class])

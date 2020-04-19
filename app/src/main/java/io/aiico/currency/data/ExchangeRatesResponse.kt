@@ -1,4 +1,4 @@
-package io.aiico.currency
+package io.aiico.currency.data
 
 import java.math.BigDecimal
 
