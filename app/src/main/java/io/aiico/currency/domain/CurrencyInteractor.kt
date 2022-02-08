@@ -23,8 +23,8 @@ class CurrencyInteractor @Inject constructor(private val remoteRepository: Curre
 
     private fun loadCurrenciesInterval(code: String): Flow<Map<String, BigDecimal>> = flow {
         while (true) {
-            delay(1_000)
             emit(remoteRepository.getExchangeRates(code).rates)
+            delay(1_000)
         }
     }.cancellable()
 
