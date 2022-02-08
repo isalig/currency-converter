@@ -1,31 +1,31 @@
 package io.aiico.currency.domain
 
 import io.aiico.currency.data.CurrencyApi
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 import java.math.BigDecimal
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class CurrencyInteractor @Inject constructor(private val remoteRepository: CurrencyApi) {
 
-    private val baseCurrencyChangePublisher = PublishSubject.create<String>()
+    private val baseCurrencyChangePublisher = MutableStateFlow<String?>(null)
+    private val baseCurrencyChangeFlow: Flow<String> =
+        baseCurrencyChangePublisher.asStateFlow().filterNotNull()
 
-    fun onBaseCurrencyChange(currencyCode: String) {
-        baseCurrencyChangePublisher.onNext(currencyCode)
+    suspend fun onBaseCurrencyChange(currencyCode: String) {
+        baseCurrencyChangePublisher.emit(currencyCode)
     }
 
-    fun getCurrenciesChange(): Observable<Map<String, BigDecimal>> =
-        baseCurrencyChangePublisher
+    fun getCurrenciesChange(): Flow<Map<String, BigDecimal>> =
+        baseCurrencyChangeFlow
             .distinctUntilChanged()
-            .switchMap { baseCurrencyCode -> loadCurrenciesInterval(baseCurrencyCode) }
+            .flatMapLatest(::loadCurrenciesInterval)
 
-    private fun loadCurrenciesInterval(code: String): Observable<Map<String, BigDecimal>> =
-        Observable
-            .interval(0, 1, TimeUnit.SECONDS)
-            .concatMapSingle {
-                remoteRepository
-                    .getExchangeRates(code)
-            }
-            .map { response -> response.rates }
+    private fun loadCurrenciesInterval(code: String): Flow<Map<String, BigDecimal>> = flow {
+        while (true) {
+            delay(1_000)
+            emit(remoteRepository.getExchangeRates(code).rates)
+        }
+    }.cancellable()
+
 }
