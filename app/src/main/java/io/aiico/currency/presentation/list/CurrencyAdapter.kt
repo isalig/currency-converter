@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.aiico.currency.R
-import io.aiico.currency.presentation.entity.CurrencyViewModel
+import io.aiico.currency.presentation.entity.CurrencyModel
 
 class CurrencyAdapter(
     private val amountChangeListener: (code: String, amount: String?) -> Unit,
     private val baseCurrencyChangeListener: (code: String, amount: String?) -> Unit
 ) : RecyclerView.Adapter<CurrencyViewHolder>() {
 
-    private val items = ArrayList<CurrencyViewModel>()
+    private val items = ArrayList<CurrencyModel>()
 
-    fun submitList(newItems: List<CurrencyViewModel>) {
+    fun submitList(newItems: List<CurrencyModel>) {
         val isInsertion = items.isEmpty()
         items.clear()
         items.addAll(newItems)

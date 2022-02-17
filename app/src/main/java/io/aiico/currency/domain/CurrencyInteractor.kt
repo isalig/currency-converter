@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.*
 import java.math.BigDecimal
 import javax.inject.Inject
 
-class CurrencyInteractor @Inject constructor(private val remoteRepository: CurrencyApi) {
+class CurrencyInteractor @Inject constructor(
+    private val remoteRepository: CurrencyApi
+) {
 
     private val baseCurrencyChangePublisher = MutableStateFlow<String?>(null)
     private val baseCurrencyChangeFlow: Flow<String> =

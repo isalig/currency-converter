@@ -7,7 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
-import io.aiico.currency.presentation.entity.CurrencyViewModel
+import io.aiico.currency.presentation.entity.CurrencyModel
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.list_item_currency.*
 import kotlinx.android.synthetic.main.list_item_currency.view.*
@@ -23,7 +23,7 @@ class CurrencyViewHolder(
     View.OnClickListener {
 
     init {
-        itemView.currencyAmountEditText.setOnFocusChangeListener { v, hasFocus ->
+        itemView.currencyAmountEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 itemView.callOnClick()
             }
@@ -31,7 +31,7 @@ class CurrencyViewHolder(
         itemView.setOnClickListener(this)
     }
 
-    fun bind(currency: CurrencyViewModel) {
+    fun bind(currency: CurrencyModel) {
         itemView.tag = currency.code
         updateAmount(currency.amount)
         with(java.util.Currency.getInstance(currency.code)) {
@@ -45,7 +45,7 @@ class CurrencyViewHolder(
         currencyAmountEditText.removeTextChangedListener(this)
         currencyAmountEditText.text?.clear()
         currencyAmountEditText.append(amount)
-        if (adapterPosition == 0) {
+        if (bindingAdapterPosition == 0) {
             currencyAmountEditText.addTextChangedListener(this)
         }
     }
@@ -61,7 +61,7 @@ class CurrencyViewHolder(
     }
 
     override fun onClick(v: View?) {
-        if (adapterPosition != 0) {
+        if (bindingAdapterPosition != 0) {
             currencyAmountEditText.requestFocus()
             showKeyboard(currencyAmountEditText)
             with(prepareDataForCallback()) {

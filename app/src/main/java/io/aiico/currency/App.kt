@@ -6,7 +6,7 @@ import android.os.Bundle
 import io.aiico.currency.di.ActivityComponentContainer
 import io.aiico.currency.di.AppComponent
 import io.aiico.currency.di.DaggerAppComponent
-import io.aiico.currency.presentation.SimpleActivityLifecycleCallbacks
+import io.aiico.currency.presentation.ActivityLifecycleCallbacksAdapter
 
 @Suppress("unused")
 class App : Application() {
@@ -16,7 +16,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent.create()
-        registerActivityLifecycleCallbacks(object : SimpleActivityLifecycleCallbacks {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacksAdapter {
             override fun onActivityPreCreated(activity: Activity, savedInstanceState: Bundle?) {
                 (activity as? ActivityComponentContainer)?.onCreateComponent(appComponent)
             }

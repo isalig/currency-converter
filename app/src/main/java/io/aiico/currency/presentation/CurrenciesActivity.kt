@@ -1,51 +1,52 @@
 package io.aiico.currency.presentation
 
 import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import io.aiico.currency.R
 import io.aiico.currency.di.ActivityComponentContainer
 import io.aiico.currency.di.AppComponent
-import io.aiico.currency.di.DaggerAppComponent
-import io.aiico.currency.presentation.entity.CurrencyViewModel
+import io.aiico.currency.di.ConverterComponent
+import io.aiico.currency.di.DaggerConverterComponent
 import io.aiico.currency.presentation.list.CurrencyAdapter
 import kotlinx.android.synthetic.main.activity_currencies.*
-import moxy.MvpAppCompatActivity
-import moxy.ktx.moxyPresenter
-import javax.inject.Inject
-import javax.inject.Provider
 
-class CurrenciesActivity : MvpAppCompatActivity(), CurrenciesView,
-    ActivityComponentContainer {
+class CurrenciesActivity : AppCompatActivity(), ActivityComponentContainer {
+
+    private lateinit var component: ConverterComponent
+    private val viewModel by viewModels<ConverterViewModel> {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T =
+                component.factory.create() as T
+        }
+    }
 
     private val adapter = CurrencyAdapter(
         { code, amount ->
-            presenter.onCurrencyAmountChange(code, amount)
+            viewModel.onCurrencyAmountChange(code, amount)
         },
         { code, amount ->
-            presenter.onBaseCurrencyChange(code, amount)
+            viewModel.onBaseCurrencyChange(code, amount)
         }
     )
 
-    @Inject
-    lateinit var presenterProvider: Provider<CurrenciesPresenter>
-
-    private val presenter: CurrenciesPresenter by moxyPresenter { presenterProvider.get() }
-
     override fun onCreateComponent(appComponent: AppComponent) {
-        appComponent.inject(this)
+        component = DaggerConverterComponent.factory().create(appComponent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DaggerAppComponent.create().inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_currencies)
         currencyRecyclerView.adapter = adapter
     }
 
-    override fun showCurrencies(currencies: List<CurrencyViewModel>) {
-        adapter.submitList(currencies)
-    }
+//    override fun showCurrencies(currencies: List<CurrencyModel>) {
+//        adapter.submitList(currencies)
+//    }
 
-    override fun moveTopFrom(from: Int) {
-        adapter.moveTopFrom(from)
-    }
+//    override fun moveTopFrom(from: Int) {
+//        adapter.moveTopFrom(from)
+//    }
 }

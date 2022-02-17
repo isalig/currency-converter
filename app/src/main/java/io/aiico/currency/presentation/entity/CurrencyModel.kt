@@ -1,6 +1,6 @@
 package io.aiico.currency.presentation.entity
 
-data class CurrencyViewModel(
+data class CurrencyModel(
     val code: String,
     var amount: String
 )

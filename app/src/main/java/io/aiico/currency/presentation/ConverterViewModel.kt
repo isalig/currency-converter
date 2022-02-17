@@ -1,33 +1,35 @@
 package io.aiico.currency.presentation
 
 import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.aiico.currency.BuildConfig
 import io.aiico.currency.domain.CurrencyInteractor
-import io.aiico.currency.presentation.entity.CurrencyViewModel
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onEach
+import io.aiico.currency.presentation.entity.ConverterViewState
+import io.aiico.currency.presentation.entity.CurrencyModel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import moxy.InjectViewState
-import moxy.MvpPresenter
-import moxy.presenterScope
 import java.math.BigDecimal
 import java.math.RoundingMode
-import javax.inject.Inject
 
 private const val SCALE = 2
 
-@InjectViewState
-class CurrenciesPresenter @Inject constructor(
+class ConverterViewModel @AssistedInject constructor(
     private val currencyInteractor: CurrencyInteractor
-) : MvpPresenter<CurrenciesView>() {
+) : ViewModel() {
+
+    private val _state = MutableStateFlow<ConverterViewState?>(null)
+    private val state: Flow<ConverterViewState> = _state.asStateFlow().filterNotNull()
 
     private var baseCurrencyCode = BuildConfig.DEFAULT_CURRENCY
     private var baseCurrencyAmount = BigDecimal(BuildConfig.DEFAULT_AMOUNT)
-    private var currencies = ArrayList<CurrencyViewModel>()
+    private var currencies = ArrayList<CurrencyModel>()
     private var rates: Map<String, BigDecimal>? = null
 
-    override fun onFirstViewAttach() {
-        presenterScope.launch {
+    init {
+        viewModelScope.launch {
             currencyInteractor
                 .getCurrenciesChange()
                 .onEach(::onUpdateRates)
@@ -37,7 +39,7 @@ class CurrenciesPresenter @Inject constructor(
         }
     }
 
-    private fun onUpdateRates(newRates: Map<String, BigDecimal>) {
+    private suspend fun onUpdateRates(newRates: Map<String, BigDecimal>) {
         rates = newRates
         if (currencies.isEmpty()) {
             initCurrencies()
@@ -45,7 +47,7 @@ class CurrenciesPresenter @Inject constructor(
             updateCurrencies(null)
         }
 
-        viewState.showCurrencies(currencies)
+        _state.emit(ConverterViewState(currencies))
     }
 
     private fun initCurrencies() {
@@ -55,7 +57,7 @@ class CurrenciesPresenter @Inject constructor(
         }
     }
 
-    private fun fromAmount(code: String, amount: BigDecimal) = CurrencyViewModel(
+    private fun fromAmount(code: String, amount: BigDecimal) = CurrencyModel(
         code,
         amount.asFormattedString(SCALE)
     )
@@ -86,7 +88,9 @@ class CurrenciesPresenter @Inject constructor(
         updateBaseCurrencyAmount(code, newAmount)
         currencies.find { it.code == code }?.amount = newAmount ?: ""
         updateCurrencies(code)
-        viewState.showCurrencies(currencies)
+        viewModelScope.launch {
+            _state.emit(ConverterViewState(currencies))
+        }
     }
 
     private fun updateBaseCurrencyAmount(code: String, newAmountString: String?) {
@@ -99,7 +103,7 @@ class CurrenciesPresenter @Inject constructor(
     }
 
     fun onBaseCurrencyChange(code: String, newAmountString: String?) {
-        presenterScope.launch {
+        viewModelScope.launch {
             baseCurrencyCode = code
             baseCurrencyAmount = if (newAmountString?.isNotBlank() == true) {
                 BigDecimal(newAmountString)
@@ -111,7 +115,7 @@ class CurrenciesPresenter @Inject constructor(
         }
     }
 
-    private fun moveBaseCurrencyTop() {
+    private suspend fun moveBaseCurrencyTop() {
         val newBaseCurrencyIndex =
             currencies.indexOfFirst { currency -> currency.code == baseCurrencyCode }
         if (newBaseCurrencyIndex != -1 && newBaseCurrencyIndex != 0) {
@@ -119,6 +123,11 @@ class CurrenciesPresenter @Inject constructor(
             currencies.removeAt(newBaseCurrencyIndex)
             currencies.add(0, newBaseCurrency)
         }
-        viewState.moveTopFrom(newBaseCurrencyIndex)
+//        viewState.moveTopFrom(newBaseCurrencyIndex)
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(): ConverterViewModel
     }
 }
