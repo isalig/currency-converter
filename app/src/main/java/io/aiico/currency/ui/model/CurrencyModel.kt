@@ -1,4 +1,4 @@
-package io.aiico.currency.presentation.entity
+package io.aiico.currency.ui.model
 
 data class CurrencyModel(
     val code: String,

@@ -1,4 +1,4 @@
-package io.aiico.currency.presentation
+package io.aiico.currency.ui
 
 import android.app.Activity
 import android.app.Application

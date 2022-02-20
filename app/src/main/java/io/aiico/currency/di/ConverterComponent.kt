@@ -1,8 +1,8 @@
 package io.aiico.currency.di
 
 import dagger.Component
-import io.aiico.currency.domain.GetCurrenciesUseCase
-import io.aiico.currency.presentation.ConverterViewModel
+import io.aiico.currency.domain.usecase.GetExchangeRatesUseCase
+import io.aiico.currency.ui.ConverterViewModel
 
 @Component(dependencies = [ConverterComponent.ConverterDependencies::class])
 interface ConverterComponent {
@@ -15,6 +15,6 @@ interface ConverterComponent {
     }
 
     interface ConverterDependencies {
-        val converterInteractor: GetCurrenciesUseCase
+        val getExchangeRatesUseCase: GetExchangeRatesUseCase
     }
 }

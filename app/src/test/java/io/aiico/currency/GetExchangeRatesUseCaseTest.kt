@@ -2,7 +2,7 @@ package io.aiico.currency
 
 import org.junit.Test
 
-class GetCurrenciesUseCaseTest {
+class GetExchangeRatesUseCaseTest {
 
     @Test
     fun `interactor returns list of currencies`() {

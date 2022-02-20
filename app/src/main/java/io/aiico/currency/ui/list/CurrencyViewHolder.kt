@@ -1,4 +1,4 @@
-package io.aiico.currency.presentation.list
+package io.aiico.currency.ui.list
 
 import android.text.Editable
 import android.text.TextWatcher
@@ -7,7 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
-import io.aiico.currency.presentation.entity.CurrencyModel
+import io.aiico.currency.ui.model.CurrencyModel
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.list_item_currency.*
 import kotlinx.android.synthetic.main.list_item_currency.view.*

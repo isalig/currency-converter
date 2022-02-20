@@ -1,10 +1,10 @@
-package io.aiico.currency.presentation.list
+package io.aiico.currency.ui.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.aiico.currency.R
-import io.aiico.currency.presentation.entity.CurrencyModel
+import io.aiico.currency.ui.model.CurrencyModel
 
 class CurrencyAdapter(
     private val amountChangeListener: (code: String, amount: String?) -> Unit,

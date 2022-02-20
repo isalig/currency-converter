@@ -1,4 +1,4 @@
-package io.aiico.currency.presentation
+package io.aiico.currency.ui
 
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -9,7 +9,7 @@ import io.aiico.currency.di.ActivityComponentContainer
 import io.aiico.currency.di.AppComponent
 import io.aiico.currency.di.ConverterComponent
 import io.aiico.currency.di.DaggerConverterComponent
-import io.aiico.currency.presentation.list.CurrencyAdapter
+import io.aiico.currency.ui.list.CurrencyAdapter
 import kotlinx.android.synthetic.main.activity_currencies.*
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch

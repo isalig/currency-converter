@@ -6,7 +6,7 @@ import android.os.Bundle
 import io.aiico.currency.di.ActivityComponentContainer
 import io.aiico.currency.di.AppComponent
 import io.aiico.currency.di.DaggerAppComponent
-import io.aiico.currency.presentation.ActivityLifecycleCallbacksAdapter
+import io.aiico.currency.ui.ActivityLifecycleCallbacksAdapter
 
 @Suppress("unused")
 class App : Application() {
