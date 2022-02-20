@@ -37,7 +37,11 @@ class CurrencyAdapter(
             baseCurrencyChangeListener
         )
 
-    override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(
+        holder: CurrencyViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
         if (payloads.isNotEmpty()) {
             holder.updateAmount(items[position].amount)
         } else {
