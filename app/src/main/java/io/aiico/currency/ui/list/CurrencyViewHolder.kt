@@ -7,46 +7,51 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
+import io.aiico.currency.databinding.ListItemCurrencyBinding
 import io.aiico.currency.ui.model.CurrencyModel
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.list_item_currency.*
-import kotlinx.android.synthetic.main.list_item_currency.view.*
-
+import java.util.*
 
 class CurrencyViewHolder(
-    override val containerView: View,
+    view: View,
     private val amountChangeListener: (code: String, amount: String?) -> Unit,
     private val baseCurrencyChangeListener: (code: String, amount: String?) -> Unit
-) : RecyclerView.ViewHolder(containerView),
-    LayoutContainer,
+) : RecyclerView.ViewHolder(view),
     TextWatcher,
     View.OnClickListener {
 
+    private val viewBinding = ListItemCurrencyBinding.bind(view)
+
     init {
-        itemView.currencyAmountEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                itemView.callOnClick()
+        with(viewBinding) {
+            currencyAmountEditText.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    root.callOnClick()
+                }
             }
+            root.setOnClickListener(this@CurrencyViewHolder)
         }
-        itemView.setOnClickListener(this)
     }
 
     fun bind(currency: CurrencyModel) {
-        itemView.tag = currency.code
-        updateAmount(currency.amount)
-        with(java.util.Currency.getInstance(currency.code)) {
-            currencyCodeTextView.text = currency.code
-            currencyNameTextView.text = displayName
-            currencySignTextView.text = symbol
+        with(viewBinding) {
+            root.tag = currency.code
+            updateAmount(currency.amount)
+            with(Currency.getInstance(currency.code)) {
+                currencyCodeTextView.text = currency.code
+                currencyNameTextView.text = displayName
+                currencySignTextView.text = symbol
+            }
         }
     }
 
     fun updateAmount(amount: String) {
-        currencyAmountEditText.removeTextChangedListener(this)
-        currencyAmountEditText.text?.clear()
-        currencyAmountEditText.append(amount)
-        if (bindingAdapterPosition == 0) {
-            currencyAmountEditText.addTextChangedListener(this)
+        with(viewBinding) {
+            currencyAmountEditText.removeTextChangedListener(this@CurrencyViewHolder)
+            currencyAmountEditText.text?.clear()
+            currencyAmountEditText.append(amount)
+            if (bindingAdapterPosition == 0) {
+                currencyAmountEditText.addTextChangedListener(this@CurrencyViewHolder)
+            }
         }
     }
 
@@ -55,17 +60,21 @@ class CurrencyViewHolder(
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        with(prepareDataForCallback()) {
-            amountChangeListener.invoke(first, second)
+        with(viewBinding) {
+            with(prepareDataForCallback()) {
+                amountChangeListener.invoke(first, second)
+            }
         }
     }
 
     override fun onClick(v: View?) {
         if (bindingAdapterPosition != 0) {
-            currencyAmountEditText.requestFocus()
-            showKeyboard(currencyAmountEditText)
-            with(prepareDataForCallback()) {
-                baseCurrencyChangeListener.invoke(first, second)
+            with(viewBinding) {
+                currencyAmountEditText.requestFocus()
+                showKeyboard(currencyAmountEditText)
+                with(prepareDataForCallback()) {
+                    baseCurrencyChangeListener.invoke(first, second)
+                }
             }
         }
     }
@@ -76,7 +85,7 @@ class CurrencyViewHolder(
         inputMethodManager?.showSoftInput(currencyAmountEditText, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    private fun prepareDataForCallback() = Pair(
+    private fun ListItemCurrencyBinding.prepareDataForCallback() = Pair(
         itemView.tag as String,
         currencyAmountEditText.text?.trim()?.toString()
     )
