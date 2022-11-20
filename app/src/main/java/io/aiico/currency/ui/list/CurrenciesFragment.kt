@@ -1,28 +1,32 @@
-package io.aiico.currency.ui
+package io.aiico.currency.ui.list
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import io.aiico.currency.databinding.ActivityCurrenciesBinding
-import io.aiico.currency.di.ActivityComponentContainer
-import io.aiico.currency.di.AppComponent
+import io.aiico.currency.App
+import io.aiico.currency.R
+import io.aiico.currency.databinding.FragmentCurrenciesBinding
 import io.aiico.currency.di.ConverterComponent
 import io.aiico.currency.di.DaggerConverterComponent
-import io.aiico.currency.ui.list.CurrencyAdapter
+import io.aiico.currency.ui.ConverterViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class CurrenciesActivity : AppCompatActivity(), ActivityComponentContainer {
+class CurrenciesFragment : Fragment(R.layout.fragment_currencies) {
 
-  private lateinit var viewBinding: ActivityCurrenciesBinding
+  private var viewBinding: FragmentCurrenciesBinding? = null
 
-  private lateinit var component: ConverterComponent
+  private val component: ConverterComponent by lazy {
+    DaggerConverterComponent.factory()
+      .create((requireActivity().application as App).appComponent)
+  }
   private val viewModel by viewModels<ConverterViewModel> {
     object : ViewModelProvider.Factory {
       override fun <T : ViewModel> create(modelClass: Class<T>): T =
@@ -35,23 +39,23 @@ class CurrenciesActivity : AppCompatActivity(), ActivityComponentContainer {
     { code, amount -> }
   )
 
-  override fun onCreateComponent(appComponent: AppComponent) {
-    component = DaggerConverterComponent.factory().create(appComponent)
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    viewBinding = ActivityCurrenciesBinding.inflate(layoutInflater)
-    setContentView(viewBinding.root)
-    with(viewBinding) {
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
+    viewBinding = FragmentCurrenciesBinding.bind(view)
+    viewBinding?.run {
       currencyRecyclerView.adapter = adapter
       lifecycleScope.launch {
         viewModel.state
           .map { state -> state.currencies }
           .onEach(adapter::submitList)
-          .flowWithLifecycle(lifecycle)
+          .flowWithLifecycle(viewLifecycleOwner.lifecycle)
           .collect()
       }
     }
+  }
+
+  override fun onStop() {
+    super.onStop()
+    viewBinding = null
   }
 }

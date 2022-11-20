@@ -47,8 +47,7 @@ class CurrencyViewHolder(
     fun updateAmount(amount: String) {
         with(viewBinding) {
             currencyAmountEditText.removeTextChangedListener(this@CurrencyViewHolder)
-            currencyAmountEditText.text?.clear()
-            currencyAmountEditText.append(amount)
+            currencyAmountEditText.text = amount
             if (bindingAdapterPosition == 0) {
                 currencyAmountEditText.addTextChangedListener(this@CurrencyViewHolder)
             }
@@ -71,7 +70,6 @@ class CurrencyViewHolder(
         if (bindingAdapterPosition != 0) {
             with(viewBinding) {
                 currencyAmountEditText.requestFocus()
-                showKeyboard(currencyAmountEditText)
                 with(prepareDataForCallback()) {
                     baseCurrencyChangeListener.invoke(first, second)
                 }

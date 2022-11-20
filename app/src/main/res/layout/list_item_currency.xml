@@ -64,17 +64,14 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@tools:sample/lorem/random" />
 
-    <io.aiico.currency.ui.FrozenCursorEditText
+    <TextView
         android:id="@+id/currencyAmountEditText"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:digits="0123456789."
         android:fontFamily="sans-serif-medium"
         android:gravity="end"
         android:hint="@string/amount_hint"
-        android:imeOptions="actionDone"
         android:importantForAutofill="no"
-        android:inputType="numberDecimal"
         android:lineSpacingExtra="5sp"
         android:paddingStart="16dp"
         android:scrollHorizontally="true"
